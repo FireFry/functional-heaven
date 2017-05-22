@@ -1,6 +1,7 @@
 package vlad.functional.heaven.maybe;
 
 import vlad.functional.heaven.higher_order.Holed;
+import vlad.functional.heaven.higher_order.Monad;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -17,6 +18,10 @@ public abstract class Maybe<A> implements Holed<Maybe<?>, A> {
 
     public static <A> Nothing<A> nothing() {
         return Nothing.instance();
+    }
+
+    public static Monad<Maybe<?>> monad() {
+        return MaybeMonad.INSTANCE;
     }
 
     public static <A> Maybe<A> resolve(Holed<Maybe<?>, A> holed) {

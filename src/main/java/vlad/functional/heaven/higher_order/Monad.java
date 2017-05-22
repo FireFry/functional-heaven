@@ -5,7 +5,7 @@ import java.util.function.Function;
 public interface Monad<T extends Holed<T, ?>> extends Applicative<T> {
 
   @Override
-  <A> Holed<T, A> pure(A x);
+  <A> Holed<T, A> pure(A a);
 
   <A, B> Holed<T, B> flatMap(Holed<T, A> t, Function<A, Holed<T, B>> f);
 
