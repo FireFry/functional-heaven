@@ -11,7 +11,7 @@ public enum StringMonoid implements Monoid<String> {
     }
 
     @Override
-    public String apply(String a, String b) {
-        return a + b;
+    public String apply(String first, String second) {
+        return first + second;
     }
 }

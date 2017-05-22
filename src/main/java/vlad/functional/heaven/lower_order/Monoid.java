@@ -12,8 +12,8 @@ public interface Monoid<A> extends Semigroup<A> {
             }
 
             @Override
-            public A apply(A a, A a2) {
-                return semigroup.apply(a, a2);
+            public A apply(A first, A second) {
+                return semigroup.apply(first, second);
             }
         };
     }

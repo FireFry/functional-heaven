@@ -22,7 +22,7 @@ final class ListMonoid<A> implements Monoid<List<A>> {
     }
 
     @Override
-    public List<A> apply(List<A> a, List<A> b) {
-        return a.append(b);
+    public List<A> apply(List<A> first, List<A> second) {
+        return first.append(second);
     }
 }
