@@ -25,7 +25,7 @@ public abstract class Eval<A> {
                 suspend -> suspendCase.apply(suspend.next()));
     }
 
-    public A run() {
+    public A eval() {
         Eval<A> eval = this;
         while (!eval.hasInstantValue()) {
             eval = eval.step();
@@ -33,7 +33,7 @@ public abstract class Eval<A> {
         return eval.getValue();
     }
 
-    private static <A> A run(Eval<A> eval) {
+    private static <A> A eval(Eval<A> eval) {
         while (!eval.hasInstantValue()) {
             eval = eval.step();
         }
