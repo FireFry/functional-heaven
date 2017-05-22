@@ -30,10 +30,10 @@ public abstract class Maybe<A> implements Holed<Maybe<?>, A> {
 
     public abstract <B> B cast(Function<Nothing<A>, B> nothing, Function<Just<A>, B> just);
 
-    public final <B> B match(Supplier<B> nothingMatcher, Function<A, B> justMatcher) {
+    public final <B> B match(Supplier<B> nothingCase, Function<A, B> justCase) {
         return cast(
-                nothing -> nothingMatcher.get(),
-                just -> justMatcher.apply(just.value()));
+                nothing -> nothingCase.get(),
+                just -> justCase.apply(just.value()));
     }
 
     public final <B> Maybe<B> map(Function<A, B> f) {

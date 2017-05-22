@@ -11,7 +11,7 @@ public final class Nothing<A> extends Maybe<A> {
 
     @SuppressWarnings("unchecked")
     static <A> Nothing<A> instance() {
-        return (Nothing<A>) INSTANCE;
+        return INSTANCE;
     }
 
     @Override
