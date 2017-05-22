@@ -2,6 +2,7 @@ package vlad.functional.heaven.list;
 
 import vlad.functional.heaven.eval.Eval;
 import vlad.functional.heaven.higher_order.Holed;
+import vlad.functional.heaven.higher_order.Monad;
 import vlad.functional.heaven.lower_order.Monoid;
 import vlad.functional.heaven.lower_order.Semigroup;
 import vlad.functional.heaven.monoids.StringMonoid;
@@ -12,7 +13,6 @@ import java.util.function.Supplier;
 
 import static vlad.functional.heaven.eval.Eval.suspend;
 import static vlad.functional.heaven.eval.Eval.yield;
-import static vlad.functional.heaven.lower_order.Monoid.monoid;
 
 public abstract class List<A> implements Holed<List<?>, A> {
 
@@ -64,6 +64,14 @@ public abstract class List<A> implements Holed<List<?>, A> {
         return chars.foldMap(StringMonoid.INSTANCE, String::valueOf);
     }
 
+    public static <A> Monoid<List<A>> monoid() {
+        return ListMonoid.instance();
+    }
+
+    public static Monad<List<?>> monad() {
+        return ListMonad.INSTANCE;
+    }
+
     public static <A> List<A> resolve(Holed<List<?>, A> holed) {
         return (List<A>) holed;
     }
@@ -106,6 +114,10 @@ public abstract class List<A> implements Holed<List<?>, A> {
                 (x, xs) -> suspend(() -> xs.mapEval(f, cons(f.apply(x), stack))));
     }
 
+    public <B> List<B> flatMap(Function<A, List<B>> f) {
+        return foldMap(monoid(), f);
+    }
+
     public List<A> reverse() {
         return reverseEval(nil()).eval();
     }
@@ -128,7 +140,7 @@ public abstract class List<A> implements Holed<List<?>, A> {
 
     @Override
     public String toString() {
-        return "[" + match(() -> "", (x, xs) -> xs.foldMap(monoid(x.toString(), (a, b) -> a + ", " + b), y -> y.toString())) + "]";
+        return "[" + match(() -> "", (x, xs) -> xs.foldMap(Monoid.monoid(x.toString(), (a, b) -> a + ", " + b), y -> y.toString())) + "]";
     }
 
 }
