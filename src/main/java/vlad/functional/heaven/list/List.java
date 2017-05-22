@@ -30,6 +30,16 @@ public abstract class List<A> implements Holed<List<?>, A> {
         return new Cons<>(head, tail);
     }
 
+    public static <A> List<A> of(A... elements) {
+        return ofEval(elements, elements.length - 1, nil()).eval();
+    }
+
+    private static <A> Eval<List<A>> ofEval(A[] elements, int index, List<A> acc) {
+        return index < 0 ?
+                yield(acc) :
+                suspend(() -> ofEval(elements, index - 1, cons(elements[index], acc)));
+    }
+
     public static <A> List<A> resolve(Holed<List<?>, A> holed) {
         return (List<A>) holed;
     }
@@ -58,7 +68,7 @@ public abstract class List<A> implements Holed<List<?>, A> {
 
     @Override
     public String toString() {
-        return "[" + match(() -> "", (x, xs) -> fold(x, (a, b) -> a + ", " + b, String::valueOf)) + "]";
+        return "[" + match(() -> "", (x, xs) -> xs.fold(x, (a, b) -> a + ", " + b, String::valueOf)) + "]";
     }
 
 }
