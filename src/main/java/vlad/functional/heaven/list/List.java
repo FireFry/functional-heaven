@@ -4,6 +4,7 @@ import vlad.functional.heaven.eval.Eval;
 import vlad.functional.heaven.higher_order.Holed;
 import vlad.functional.heaven.lower_order.Monoid;
 import vlad.functional.heaven.lower_order.Semigroup;
+import vlad.functional.heaven.monoids.StringMonoid;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -11,6 +12,7 @@ import java.util.function.Supplier;
 
 import static vlad.functional.heaven.eval.Eval.suspend;
 import static vlad.functional.heaven.eval.Eval.yield;
+import static vlad.functional.heaven.lower_order.Monoid.monoid;
 
 public abstract class List<A> implements Holed<List<?>, A> {
 
@@ -31,6 +33,10 @@ public abstract class List<A> implements Holed<List<?>, A> {
     }
 
     public static <A> List<A> of(A... elements) {
+        return copyOf(elements);
+    }
+
+    public static <A> List<A> copyOf(A[] elements) {
         return ofEval(elements, elements.length - 1, nil()).eval();
     }
 
@@ -38,6 +44,24 @@ public abstract class List<A> implements Holed<List<?>, A> {
         return index < 0 ?
                 yield(acc) :
                 suspend(() -> ofEval(elements, index - 1, cons(elements[index], acc)));
+    }
+
+    public static List<Character> copyOf(char[] elements) {
+        return ofEval(elements, elements.length - 1, nil()).eval();
+    }
+
+    private static Eval<List<Character>> ofEval(char[] elements, int index, List<Character> acc) {
+        return index < 0 ?
+                yield(acc) :
+                suspend(() -> ofEval(elements, index - 1, cons(elements[index], acc)));
+    }
+
+    public static List<Character> ofChars(String s) {
+        return copyOf(s.toCharArray());
+    }
+
+    public static String toString(List<Character> chars) {
+        return chars.foldMap(StringMonoid.INSTANCE, String::valueOf);
     }
 
     public static <A> List<A> resolve(Holed<List<?>, A> holed) {
@@ -52,23 +76,59 @@ public abstract class List<A> implements Holed<List<?>, A> {
                 cons -> consCase.apply(cons.head(), cons.tail()));
     }
 
-    public <B> B fold(A empty, Semigroup<B> semigroup, Function<A, B> f) {
-        return foldEval(f.apply(empty), semigroup, f).eval();
+    public A fold(Monoid<A> monoid) {
+        return foldEval(monoid, monoid.empty()).eval();
     }
 
-    public <B> B fold(Monoid<B> monoid, Function<A, B> f) {
-        return foldEval(monoid.empty(), monoid, f).eval();
-    }
-
-    private <B> Eval<B> foldEval(B acc, Semigroup<B> semigroup, Function<A, B> f) {
+    private Eval<A> foldEval(Semigroup<A> semigroup, A acc) {
         return match(
                 () -> yield(acc),
-                (x, xs) -> suspend(() -> xs.foldEval(semigroup.apply(acc, f.apply(x)), semigroup, f)));
+                (x, xs) -> suspend(() -> xs.foldEval(semigroup, semigroup.apply(acc, x))));
+    }
+
+    public <B> B foldMap(Monoid<B> monoid, Function<A, B> f) {
+        return foldMapEval(monoid, f, monoid.empty()).eval();
+    }
+
+    private <B> Eval<B> foldMapEval(Semigroup<B> semigroup, Function<A, B> f, B acc) {
+        return match(
+                () -> yield(acc),
+                (x, xs) -> suspend(() -> xs.foldMapEval(semigroup, f, semigroup.apply(acc, f.apply(x)))));
+    }
+
+    public <B> List<B> map(Function<A, B> f) {
+        return mapEval(f, nil()).eval();
+    }
+
+    private <B> Eval<List<B>> mapEval(Function<A, B> f, List<B> stack) {
+        return match(
+                () -> yield(stack.reverse()),
+                (x, xs) -> suspend(() -> xs.mapEval(f, cons(f.apply(x), stack))));
+    }
+
+    public List<A> reverse() {
+        return reverseEval(nil()).eval();
+    }
+
+    private Eval<List<A>> reverseEval(List<A> acc) {
+        return match(
+                () -> yield(acc),
+                (x, xs) -> suspend(() -> xs.reverseEval(cons(x, acc))));
+    }
+
+    public List<A> append(List<A> other) {
+        return reverse().appendReverseEval(other).eval();
+    }
+
+    private Eval<List<A>> appendReverseEval(List<A> other) {
+        return match(
+                () -> yield(other),
+                (x, xs) -> suspend(() -> xs.reverseEval(cons(x, other))));
     }
 
     @Override
     public String toString() {
-        return "[" + match(() -> "", (x, xs) -> xs.fold(x, (a, b) -> a + ", " + b, String::valueOf)) + "]";
+        return "[" + match(() -> "", (x, xs) -> xs.foldMap(monoid(x.toString(), (a, b) -> a + ", " + b), y -> y.toString())) + "]";
     }
 
 }
