@@ -19,7 +19,7 @@ public abstract class Eval<A> {
 
     abstract <B> B cast(Function<Yield<A>, B> yield, Function<Suspend<A>, B> suspend);
 
-    public <B> B match(Function<A, B> yieldCase, Function<Supplier<Eval<A>>, B> suspendCase) {
+    <B> B match(Function<A, B> yieldCase, Function<Supplier<Eval<A>>, B> suspendCase) {
         return cast(
                 yield -> yieldCase.apply(yield.value()),
                 suspend -> suspendCase.apply(suspend.next()));
