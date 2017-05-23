@@ -8,7 +8,7 @@ public interface Joiner<A> extends Semigroup<A> {
 
     A last();
 
-    static <A> Joiner<A> construct(Semigroup<A> semigroup, A first, A delimiter, A last) {
+    static <A> Joiner<A> joiner(Semigroup<A> semigroup, A first, A delimiter, A last) {
         return new JoinerConstruct<>(semigroup, first, delimiter, last);
     }
 

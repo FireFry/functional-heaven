@@ -9,7 +9,7 @@ public final class StringMonoid implements Monoid<String> {
 
     }
 
-    public static StringMonoid instance() {
+    public static StringMonoid stringMonoid() {
         return INSTANCE;
     }
 

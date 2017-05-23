@@ -9,10 +9,11 @@ import vlad.functional_heaven.higher_order.Monad;
 import vlad.functional_heaven.lower_order.Joiner;
 import vlad.functional_heaven.lower_order.Monoid;
 import vlad.functional_heaven.lower_order.Semigroup;
-import vlad.functional_heaven.monoids.StringMonoid;
 
 import static vlad.functional_heaven.eval.Eval.defer;
 import static vlad.functional_heaven.eval.Eval.yield;
+import static vlad.functional_heaven.lower_order.Joiner.joiner;
+import static vlad.functional_heaven.monoids.StringMonoid.stringMonoid;
 
 public abstract class List<A> implements Holed<List<?>, A> {
 
@@ -148,7 +149,7 @@ public abstract class List<A> implements Holed<List<?>, A> {
 
     @Override
     public String toString() {
-        return map(String::valueOf).join(Joiner.construct(StringMonoid.instance(), "[", ", ", "]"));
+        return map(String::valueOf).join(joiner(stringMonoid(), "[", ", ", "]"));
     }
 
 }
