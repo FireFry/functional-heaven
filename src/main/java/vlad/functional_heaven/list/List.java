@@ -8,7 +8,6 @@ import vlad.functional_heaven.higher_order.Holed;
 import vlad.functional_heaven.higher_order.Monad;
 import vlad.functional_heaven.lower_order.Joiner;
 import vlad.functional_heaven.lower_order.Monoid;
-import vlad.functional_heaven.lower_order.Semigroup;
 
 import static vlad.functional_heaven.eval.Eval.defer;
 import static vlad.functional_heaven.eval.Eval.yield;
@@ -21,15 +20,15 @@ public abstract class List<A> implements Holed<List<?>, A> {
 
     }
 
-    public static <A> Nil<A> nil() {
+    public static <A> List<A> nil() {
         return Nil.instance();
     }
 
-    public static <A> Cons<A> cons(A head) {
+    public static <A> List<A> cons(A head) {
         return cons(head, nil());
     }
 
-    public static <A> Cons<A> cons(A head, List<A> tail) {
+    public static <A> List<A> cons(A head, List<A> tail) {
         return new Cons<>(head, tail);
     }
 
@@ -38,13 +37,13 @@ public abstract class List<A> implements Holed<List<?>, A> {
     }
 
     public static <A> List<A> copyOf(A[] elements) {
-        return ofEval(elements, elements.length - 1, nil()).eval();
+        return copyOfEval(elements, elements.length - 1, nil()).eval();
     }
 
-    private static <A> Eval<List<A>> ofEval(A[] elements, int index, List<A> acc) {
+    private static <A> Eval<List<A>> copyOfEval(A[] elements, int index, List<A> acc) {
         return index < 0 ?
                 yield(acc) :
-                defer(() -> ofEval(elements, index - 1, cons(elements[index], acc)));
+                defer(() -> copyOfEval(elements, index - 1, cons(elements[index], acc)));
     }
 
     public static List<Character> copyOf(char[] elements) {
@@ -81,58 +80,38 @@ public abstract class List<A> implements Holed<List<?>, A> {
                 cons -> consCase.apply(cons.head(), cons.tail()));
     }
 
+    public <B> B foldl(B acc, BiFunction<B, A, B> f) {
+        return foldlEval(f, acc).eval();
+    }
+
+    private <B> Eval<B> foldlEval(BiFunction<B, A, B> f, B acc) {
+        return match(
+                () -> yield(acc),
+                (x, xs) -> defer(() -> xs.foldlEval(f, f.apply(acc, x))));
+    }
+
+    public <B> B foldr(BiFunction<A, B, B> f, B acc) {
+        return revert().foldl(acc, (b, a) -> f.apply(a, b));
+    }
+
     public A fold(Monoid<A> monoid) {
-        return foldEval(monoid, monoid.empty()).eval();
-    }
-
-    private Eval<A> foldEval(Semigroup<A> semigroup, A acc) {
-        return match(
-                () -> yield(acc),
-                (x, xs) -> defer(() -> xs.foldEval(semigroup, semigroup.apply(acc, x))));
-    }
-
-    public <B> B foldMap(Monoid<B> monoid, Function<A, B> f) {
-        return foldMapEval(monoid, f, monoid.empty()).eval();
-    }
-
-    private <B> Eval<B> foldMapEval(Semigroup<B> semigroup, Function<A, B> f, B acc) {
-        return match(
-                () -> yield(acc),
-                (x, xs) -> defer(() -> xs.foldMapEval(semigroup, f, semigroup.apply(acc, f.apply(x)))));
+        return foldl(monoid.empty(), monoid);
     }
 
     public <B> List<B> map(Function<A, B> f) {
-        return mapEval(f, nil()).eval();
-    }
-
-    private <B> Eval<List<B>> mapEval(Function<A, B> f, List<B> stack) {
-        return match(
-                () -> yield(stack.revert()),
-                (x, xs) -> defer(() -> xs.mapEval(f, cons(f.apply(x), stack))));
+        return foldr((a, list) -> cons(f.apply(a), list), nil());
     }
 
     public <B> List<B> flatMap(Function<A, List<B>> f) {
-        return foldMap(monoid(), f);
+        return map(f).fold(monoid());
     }
 
     public List<A> revert() {
-        return revertEval(nil()).eval();
-    }
-
-    private Eval<List<A>> revertEval(List<A> acc) {
-        return match(
-                () -> yield(acc),
-                (x, xs) -> defer(() -> xs.revertEval(cons(x, acc))));
+        return foldl(nil(), (list, a) -> cons(a, list));
     }
 
     public List<A> append(List<A> other) {
-        return revert().appendRevertEval(other).eval();
-    }
-
-    private Eval<List<A>> appendRevertEval(List<A> other) {
-        return match(
-                () -> yield(other),
-                (x, xs) -> defer(() -> xs.revertEval(cons(x, other))));
+        return revert().foldl(other, (list, a) -> cons(a, list));
     }
 
     public A join(Joiner<A> joiner) {
@@ -142,9 +121,9 @@ public abstract class List<A> implements Holed<List<?>, A> {
     private Eval<A> joinEval(Joiner<A> joiner, A acc) {
         return match(
                 () -> yield(joiner.apply(acc, joiner.last())),
-                (x, xs) -> xs.cast(
-                        nil -> defer(() -> xs.joinEval(joiner, joiner.apply(acc, x))),
-                        cons -> defer(() -> xs.joinEval(joiner, joiner.apply(acc, joiner.apply(x, joiner.delimiter()))))));
+                (x, xs) -> defer(() -> xs.joinEval(joiner, joiner.apply(acc, xs.cast(
+                        nil -> x,
+                        cons -> joiner.apply(x, joiner.delimiter()))))));
     }
 
     @Override
