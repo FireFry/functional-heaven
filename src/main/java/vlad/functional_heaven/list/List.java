@@ -107,7 +107,7 @@ public abstract class List<A> implements Holed<List<?>, A> {
 
     private <B> Eval<List<B>> mapEval(Function<A, B> f, List<B> stack) {
         return match(
-                () -> yield(stack.reverse()),
+                () -> yield(stack.revert()),
                 (x, xs) -> defer(() -> xs.mapEval(f, cons(f.apply(x), stack))));
     }
 
@@ -115,24 +115,24 @@ public abstract class List<A> implements Holed<List<?>, A> {
         return foldMap(monoid(), f);
     }
 
-    public List<A> reverse() {
-        return reverseEval(nil()).eval();
+    public List<A> revert() {
+        return revertEval(nil()).eval();
     }
 
-    private Eval<List<A>> reverseEval(List<A> acc) {
+    private Eval<List<A>> revertEval(List<A> acc) {
         return match(
                 () -> yield(acc),
-                (x, xs) -> defer(() -> xs.reverseEval(cons(x, acc))));
+                (x, xs) -> defer(() -> xs.revertEval(cons(x, acc))));
     }
 
     public List<A> append(List<A> other) {
-        return reverse().appendReverseEval(other).eval();
+        return revert().appendRevertEval(other).eval();
     }
 
-    private Eval<List<A>> appendReverseEval(List<A> other) {
+    private Eval<List<A>> appendRevertEval(List<A> other) {
         return match(
                 () -> yield(other),
-                (x, xs) -> defer(() -> xs.reverseEval(cons(x, other))));
+                (x, xs) -> defer(() -> xs.revertEval(cons(x, other))));
     }
 
     public A join(Joiner<A> joiner) {
