@@ -6,6 +6,7 @@ import vlad.functional_heaven.function.Function;
 import vlad.functional_heaven.function.Supplier;
 import vlad.functional_heaven.higher_order.Holed;
 import vlad.functional_heaven.higher_order.Monad;
+import vlad.functional_heaven.lower_order.Joiner;
 import vlad.functional_heaven.lower_order.Monoid;
 import vlad.functional_heaven.lower_order.Semigroup;
 import vlad.functional_heaven.monoids.StringMonoid;
@@ -57,10 +58,6 @@ public abstract class List<A> implements Holed<List<?>, A> {
 
     public static List<Character> ofChars(String s) {
         return copyOf(s.toCharArray());
-    }
-
-    public static String toString(List<Character> chars) {
-        return chars.foldMap(StringMonoid.INSTANCE, String::valueOf);
     }
 
     public static <A> Monoid<List<A>> monoid() {
@@ -137,9 +134,21 @@ public abstract class List<A> implements Holed<List<?>, A> {
                 (x, xs) -> defer(() -> xs.reverseEval(cons(x, other))));
     }
 
+    public A join(Joiner<A> joiner) {
+        return joinEval(joiner, joiner.first()).eval();
+    }
+
+    private Eval<A> joinEval(Joiner<A> joiner, A acc) {
+        return match(
+                () -> yield(joiner.apply(acc, joiner.last())),
+                (x, xs) -> xs.cast(
+                        nil -> defer(() -> xs.joinEval(joiner, joiner.apply(acc, x))),
+                        cons -> defer(() -> xs.joinEval(joiner, joiner.apply(acc, joiner.apply(x, joiner.delimiter()))))));
+    }
+
     @Override
     public String toString() {
-        return "[" + match(() -> "", (x, xs) -> xs.foldMap(Monoid.monoid(x.toString(), (a, b) -> a + ", " + b), y -> y.toString())) + "]";
+        return map(String::valueOf).join(Joiner.construct(StringMonoid.instance(), "[", ", ", "]"));
     }
 
 }

@@ -2,8 +2,16 @@ package vlad.functional_heaven.monoids;
 
 import vlad.functional_heaven.lower_order.Monoid;
 
-public enum StringMonoid implements Monoid<String> {
-    INSTANCE;
+public final class StringMonoid implements Monoid<String> {
+    private static final StringMonoid INSTANCE = new StringMonoid();
+
+    private StringMonoid() {
+
+    }
+
+    public static StringMonoid instance() {
+        return INSTANCE;
+    }
 
     private static final String EMPTY_STRING = "";
 
