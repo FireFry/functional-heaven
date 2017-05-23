@@ -1,6 +1,6 @@
 package vlad.functional.heaven.maybe;
 
-import java.util.function.Function;
+import vlad.functional.heaven.function.Function;
 
 public final class Nothing<A> extends Maybe<A> {
     private static final Nothing INSTANCE = new Nothing();

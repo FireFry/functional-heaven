@@ -1,8 +1,7 @@
 package vlad.functional.heaven.free;
 
+import vlad.functional.heaven.function.Function;
 import vlad.functional.heaven.higher_order.Holed;
-
-import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
 

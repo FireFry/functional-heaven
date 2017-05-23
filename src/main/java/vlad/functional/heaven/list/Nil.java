@@ -1,6 +1,6 @@
 package vlad.functional.heaven.list;
 
-import java.util.function.Function;
+import vlad.functional.heaven.function.Function;
 
 public final class Nil<A> extends List<A> {
     private static final Nil INSTANCE = new Nil();

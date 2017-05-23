@@ -1,6 +1,6 @@
 package vlad.functional.heaven.maybe;
 
-import java.util.function.Function;
+import vlad.functional.heaven.function.Function;
 
 import static java.util.Objects.requireNonNull;
 

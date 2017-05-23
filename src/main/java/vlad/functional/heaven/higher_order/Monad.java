@@ -1,6 +1,6 @@
 package vlad.functional.heaven.higher_order;
 
-import java.util.function.Function;
+import vlad.functional.heaven.function.Function;
 
 public interface Monad<T extends Holed<T, ?>> extends Applicative<T> {
 

@@ -1,11 +1,11 @@
 package vlad.functional.heaven.either;
 
+import vlad.functional.heaven.function.Function;
 import vlad.functional.heaven.higher_order.Holed;
 import vlad.functional.heaven.higher_order.Monad;
 
-import java.util.function.Function;
-
-import static vlad.functional.heaven.either.Either.*;
+import static vlad.functional.heaven.either.Either.resolve;
+import static vlad.functional.heaven.either.Either.right;
 
 final class EitherMonad<A> implements Monad<Either<A, ?>> {
     private static final EitherMonad INSTANCE = new EitherMonad();

@@ -2,7 +2,7 @@ package vlad.functional.heaven.list;
 
 import vlad.functional.heaven.lower_order.Monoid;
 
-import static vlad.functional.heaven.list.List.*;
+import static vlad.functional.heaven.list.List.nil;
 
 final class ListMonoid<A> implements Monoid<List<A>> {
     private static final ListMonoid INSTANCE = new ListMonoid();

@@ -1,11 +1,11 @@
 package vlad.functional.heaven.maybe;
 
+import vlad.functional.heaven.function.Function;
 import vlad.functional.heaven.higher_order.Holed;
 import vlad.functional.heaven.higher_order.Monad;
 
-import java.util.function.Function;
-
-import static vlad.functional.heaven.maybe.Maybe.*;
+import static vlad.functional.heaven.maybe.Maybe.just;
+import static vlad.functional.heaven.maybe.Maybe.resolve;
 
 enum MaybeMonad implements Monad<Maybe<?>> {
     INSTANCE;

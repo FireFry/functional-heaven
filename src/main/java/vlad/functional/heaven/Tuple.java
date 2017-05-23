@@ -1,9 +1,8 @@
 package vlad.functional.heaven;
 
+import vlad.functional.heaven.function.BiFunction;
+import vlad.functional.heaven.function.Function;
 import vlad.functional.heaven.higher_order.Holed;
-
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
 

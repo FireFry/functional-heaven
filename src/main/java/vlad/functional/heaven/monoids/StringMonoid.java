@@ -5,9 +5,11 @@ import vlad.functional.heaven.lower_order.Monoid;
 public enum StringMonoid implements Monoid<String> {
     INSTANCE;
 
+    private static final String EMPTY_STRING = "";
+
     @Override
     public String empty() {
-        return "";
+        return EMPTY_STRING;
     }
 
     @Override

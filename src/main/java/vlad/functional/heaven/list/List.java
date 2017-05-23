@@ -1,15 +1,14 @@
 package vlad.functional.heaven.list;
 
 import vlad.functional.heaven.eval.Eval;
+import vlad.functional.heaven.function.BiFunction;
+import vlad.functional.heaven.function.Function;
+import vlad.functional.heaven.function.Supplier;
 import vlad.functional.heaven.higher_order.Holed;
 import vlad.functional.heaven.higher_order.Monad;
 import vlad.functional.heaven.lower_order.Monoid;
 import vlad.functional.heaven.lower_order.Semigroup;
 import vlad.functional.heaven.monoids.StringMonoid;
-
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 import static vlad.functional.heaven.eval.Eval.suspend;
 import static vlad.functional.heaven.eval.Eval.yield;

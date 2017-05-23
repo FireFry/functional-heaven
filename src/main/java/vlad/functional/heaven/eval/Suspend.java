@@ -1,7 +1,7 @@
 package vlad.functional.heaven.eval;
 
-import java.util.function.Function;
-import java.util.function.Supplier;
+import vlad.functional.heaven.function.Function;
+import vlad.functional.heaven.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 

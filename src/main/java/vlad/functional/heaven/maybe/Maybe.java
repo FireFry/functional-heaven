@@ -1,10 +1,9 @@
 package vlad.functional.heaven.maybe;
 
+import vlad.functional.heaven.function.Function;
+import vlad.functional.heaven.function.Supplier;
 import vlad.functional.heaven.higher_order.Holed;
 import vlad.functional.heaven.higher_order.Monad;
-
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 public abstract class Maybe<A> implements Holed<Maybe<?>, A> {
 

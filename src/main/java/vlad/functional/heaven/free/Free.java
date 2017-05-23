@@ -2,15 +2,15 @@ package vlad.functional.heaven.free;
 
 import vlad.functional.heaven.either.Either;
 import vlad.functional.heaven.eval.Eval;
+import vlad.functional.heaven.function.Function;
 import vlad.functional.heaven.higher_order.Functor;
 import vlad.functional.heaven.higher_order.Holed;
 import vlad.functional.heaven.higher_order.Monad;
 import vlad.functional.heaven.higher_order.Natural;
 
-import java.util.function.Function;
-
-import static vlad.functional.heaven.either.Either.*;
-import static vlad.functional.heaven.eval.Eval.*;
+import static vlad.functional.heaven.either.Either.left;
+import static vlad.functional.heaven.either.Either.right;
+import static vlad.functional.heaven.eval.Eval.yield;
 
 public abstract class Free<T extends Holed<T, ?>, A> implements Holed<Free<T, ?>, A> {
 

@@ -1,11 +1,11 @@
 package vlad.functional.heaven.list;
 
+import vlad.functional.heaven.function.Function;
 import vlad.functional.heaven.higher_order.Holed;
 import vlad.functional.heaven.higher_order.Monad;
 
-import java.util.function.Function;
-
-import static vlad.functional.heaven.list.List.*;
+import static vlad.functional.heaven.list.List.cons;
+import static vlad.functional.heaven.list.List.resolve;
 
 enum ListMonad implements Monad<List<?>> {
     INSTANCE;

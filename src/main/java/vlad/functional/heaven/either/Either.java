@@ -1,9 +1,8 @@
 package vlad.functional.heaven.either;
 
+import vlad.functional.heaven.function.Function;
 import vlad.functional.heaven.higher_order.Holed;
 import vlad.functional.heaven.higher_order.Monad;
-
-import java.util.function.Function;
 
 public abstract class Either<A, B> implements Holed<Either<A, ?>, B> {
 
